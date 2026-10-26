@@ -353,7 +353,7 @@ $("#photo").onchange = async (e) => {
   const f = e.target.files[0]; if (!f) return;
   const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(f); });
   lastImg = img; $("#preview").src = img.src; $("#preview").hidden = false; $("#takePhoto").hidden = true;
-  photoBlob = await shrink(img, 1200, .85, true); thumb = await shrink(img, 360, .7, false);
+  photoBlob = await shrink(img, 768, .75, true); thumb = await shrink(img, 360, .7, false);
   $("#resultBox").hidden = true; analyze();
 };
 function shrink(img, max, q, blob){
@@ -411,7 +411,8 @@ async function analyze(){
   ["green","scum"].forEach(k => { $("#q-"+k).checked = false; $("#h-"+k).hidden = true; });
   const txt = $("#aiText");
   if (!sample) { useColorAnalysis(""); $("#checklist").hidden = false; return; }
-  txt.textContent = "Looking at your photo…";
+  useColorAnalysis("Instant color check while the AI looks closer…");
+  $("#checklist").hidden = false;
   try {
     const r = await sample.json(
 `You help neighbors in Gwinnett County, Georgia screen photos of small lakes and ponds for possible harmful algal blooms (cyanobacteria / blue-green algae).
@@ -422,9 +423,10 @@ Classify the photo:
 Also report what you can see: water color, whether scum or film is present, and which look-alike it most resembles if any.
 Reply ONLY with JSON: {"verdict":"harmful"|"harmless"|"unclear","confidence":"low"|"medium"|"high","waterColor":"short phrase","greenOrPaintLike":true|false,"scumVisible":true|false,"lookalike":"pollen"|"duckweed"|"filamentous algae"|"mud"|"none","explanation":"1-2 plain sentences"}
 Never claim the water is safe or toxic for certain.`, { images: photoBlob });
+    $("#aiLook").hidden = true;
     ai = { verdict: ["harmful","harmless","unclear"].includes(r.verdict) ? r.verdict : "unclear", confidence: ["low","medium","high"].includes(r.confidence) ? r.confidence : "low" };
-    const b = document.createElement("span"); b.className = "badge b-" + ({harmful:"high",harmless:"low",unclear:"unclear"}[ai.verdict]); b.textContent = VERDICT[ai.verdict] + " · " + ai.confidence;
-    $("#aiBadge").append(b);
+    const b = document.createElement("span"); b.className = "badge b-" + ({harmful:"high",harmless:"low",unclear:"unclear"}[ai.verdict]); b.textContent = "AI: " + VERDICT[ai.verdict] + " · " + ai.confidence;
+    $("#aiBadge").innerHTML = ""; $("#aiBadge").append(b);
     txt.textContent = String(r.explanation || "").slice(0,400); txt.style.color = "var(--fg)";
     const feat = $("#aiFeat"); feat.innerHTML = "";
     [["Color", r.waterColor], ["Scum", r.scumVisible ? "visible" : "not seen"]].forEach(([k,v]) => { if (v) { const s = document.createElement("span"); s.textContent = k + ": " + String(v).slice(0,40); feat.append(s); } });
@@ -433,7 +435,7 @@ Never claim the water is safe or toxic for certain.`, { images: photoBlob });
     if (r.greenOrPaintLike === true) { $("#q-green").checked = true; $("#h-green").hidden = false; }
     if (r.scumVisible === true) { $("#q-scum").checked = true; $("#h-scum").hidden = false; }
   } catch (e) {
-    useColorAnalysis("AI check unavailable, so Blym used its built-in color analysis instead.");
+    useColorAnalysis("AI check unavailable, so this is Blym's built-in color analysis.");
   }
   $("#checklist").hidden = false;
 }
