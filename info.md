@@ -1,9 +1,3 @@
-# Blym
-
-**Is this water safe?** Blym helps people check small lakes and ponds for signs of toxic algae (harmful cyanobacteria blooms).
-
-Built by Rania Sherwani, Gwinnett School of Mathematics, Science and Technology, for the 2026 Congressional App Challenge (GA-04).
-
 ## The problem
 
 Toxic algae blooms can make people sick and kill dogs within hours. EPA satellites only monitor about 2,000 of the largest U.S. lakes, so small neighborhood lakes and ponds, like the one in front of my house in Gwinnett County, have no one watching. Existing apps (like the EPA's bloomWatch) let you *report* a bloom once you already know it is one. Blym helps the person standing at the water figure out whether it's dangerous and what to do right now.
@@ -48,10 +42,3 @@ Found in `index.html`, functions `photoScore()` and `computeRisk()`:
 3. **Config:** put your Supabase Project URL and anon public key in `config.js`.
 4. **Hosting:** GitHub repo Settings > Pages > Deploy from branch `main`, folder `/ (root)`.
 
-## Safety note
-
-Blym is a safety awareness tool, not a water test. You can't tell if algae is toxic just by looking. When in doubt, stay out.
-
-## Sources
-
-Georgia EPD, CDC, EPA, and USGS guidance on harmful algal blooms. Learn-page photos: USGS (public domain).
